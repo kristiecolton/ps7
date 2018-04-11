@@ -5,7 +5,7 @@
  *)
 
 open Points ;;
-     
+
 (* Bound the locations of the masses within a frame of fixed size *)
 let cFRAMESIZE = 500 ;;
 
@@ -14,16 +14,34 @@ class mass =
 
   fun (initx : float) (inity : float) (m : float) ->
     object (this)
-           
+
       (* A mass is located at a point *)
       inherit point initx inity as super
-                                     
+
       (* Unique identifier for the mass *)
       val id = currid := !currid + 1; !currid
       method get_id = id
-                        
+
       (* The mass itself *)
       val mass = m
+
+      val mutable prev_x = initx
+      val mutable prev_y = inity
+
+      method! move (p: point) : unit =
+(* function that checks if moves are valid *)
+        let move_checker (f : float) =
+          if f < 0. then 0.
+          else if f > (float_of_int cFRAMESIZE) then (float_of_int cFRAMESIZE)
+          else f
+        in
+        let checked_point = new point (move_checker p#x) (move_checker p#y)
+      in super#move checked_point
+
+      method restore_pos : unit =
+        let new_point = new point prev_x prev_y in
+        super#move new_point
+
 
       (*................................................................
       Your part goes here: Provide the implementations of the move and
@@ -46,7 +64,7 @@ class mass =
         this#reset_force
       method scale_force factor =
         this#set_force (this#get_force#scale factor)
-                       
+
       (* I/O methods *)
       method reveal =
         let x, y = this#round in
@@ -67,5 +85,5 @@ about your responses and will use them to help guide us in creating
 future assignments.
 ......................................................................*)
 
-let minutes_spent_on_part () : int =
-  failwith "no time estimate provided for masses" ;;
+let minutes_spent_on_part () : int = 120
+ 
