@@ -4,5 +4,21 @@
                          -.-. ... ..... .----
  *)
 
-let example () : unit =
-	failwith "custom graph not implemented"
+open List ;;
+
+open Points ;;
+open Masses ;;
+open Controls ;;
+open Graphobj ;;
+open Graphdraw ;;
+open Testgraphs;;
+
+let example () =
+  graph { labels = ["Wake Up";
+                    "Eat Breakfast"];
+          positions = [ (250,400);(200,300)]
+             ;
+          edges = [
+            (0 , 1)] } ;;
+
+let _ = example () ;;
